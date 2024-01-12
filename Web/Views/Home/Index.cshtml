@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Dotnet Demos";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#btnPublish").click(function () {
+            val = $("#txtMessage").val()
+            if (!val) {
+                alert("Please enter a message")
+                return
+            }
+            $.ajax({
+                url: "sendMessage",
+                type: "POST",
+                data: {
+                    message: $("#txtMessage").val()
+                },
+                success: function (data) {
+                    $("#messageList").append("<li>" + `${val} - Success` + "</li>")
+                },
+                error: function (xhr, status, error) {
+                    $("#messageList").append("<li>" + `${val} - ${status}` + "</li>")
+                }
+            });
+        });
+    });
+</script>
+
+<div class="text-center">
+    <h4>Welcome</h4>
+    <span class="text-muted">This is a demo application for RabbitMQ and Masstransit</span>
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-md-6">
+            <!-- publish a sample message to RabbitMQ -->
+            <div class="row">
+                <input type="text" id="txtMessage" class="form-control" style="margin-bottom: 5px;"
+                    placeholder="Enter a message" />
+                <button class="btn btn-primary" id="btnPublish">Publish a message</button>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <!-- show the list of messages in the queue -->
+            <!-- partial view -->
+            @await Html.PartialAsync("_Messages")
+        </div>
+    </div>
+</div>
