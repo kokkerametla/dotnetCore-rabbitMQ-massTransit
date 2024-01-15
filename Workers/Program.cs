@@ -1,5 +1,6 @@
 using MassTransit;
 using Message;
+using Messaging.Model;
 using RabbitMQ.Client;
 
 IHost host = Host.CreateDefaultBuilder(args)
@@ -13,25 +14,37 @@ static void AddRabbitMQ(IServiceCollection services)
 {
     services.AddMassTransit(x =>
     {
+
+        x.AddConsumer<TestConsumer>();
         x.UsingRabbitMq((context, cfg) =>
         {
-            cfg.Host("amqp://guest:guest@10.90.10.221");
+            cfg.Host("amqp://guest:guest@localhost");
 
             cfg.Message<TestMessage>(
                         x => x.SetEntityName(nameof(TestMessage)));
 
             cfg.Publish<TestMessage>(
-            x => x.ExchangeType = ExchangeType.Direct);
+            x =>
+            {
+                x.ExchangeType = ExchangeType.Direct;
+            });
 
             cfg.ReceiveEndpoint("service-test-queue", e =>
             {
-                e.Durable = true;
+                e.PrefetchCount = 2;
+                e.ConfigureConsumeTopology = false;
+                e.ClearSerialization();
+                e.UseRawJsonSerializer();
                 e.SetQueueArgument("x-message-deduplication", true);
-                e.Handler<TestMessage>(async context =>
+
+                e.ConfigureConsumer<TestConsumer>(context);
+
+                e.Bind(nameof(TestMessage), x =>
                 {
-                    await Console.Out.WriteLineAsync($"Received: {context.Message.Text}");
+                    x.ExchangeType = ExchangeType.Direct;
                 });
             });
+
 
             cfg.ConfigureEndpoints(context);
         });

@@ -2,19 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using dotnetCore_rabbitMQ_massTransit.Models;
 using MassTransit;
+using Messaging.Model;
 
 namespace dotnetCore_rabbitMQ_massTransit.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IBusControl _bus;
+    private readonly IPublishEndpoint _publishEndpoint;
 
     public HomeController(ILogger<HomeController> logger,
-        IBusControl bus)
+        IPublishEndpoint publishEndpoint)
     {
         _logger = logger;
-        _bus = bus;
+        _publishEndpoint = publishEndpoint;
     }
 
     public IActionResult Index()
@@ -37,16 +38,10 @@ public class HomeController : Controller
     [Route("sendMessage")]
     public async Task<JsonResult> SendMessage(string message)
     {
-        await _bus.Publish(new TestMessage { Text = message }, x =>
+        await _publishEndpoint.Publish(new TestMessage { Text = message }, x =>
         {
-            x.Headers.Set("x-deduplication-header", $"{message}");
+            x.Headers.Set("x-deduplication-header", message);
         });
         return Json(new { success = true });
     }
-}
-
-
-internal class TestMessage
-{
-    public required string Text { get; set; }
 }

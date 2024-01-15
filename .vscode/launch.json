@@ -1,48 +1,36 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "web/worker",
+      "configurations": ["web", "worker"]
+    }
+  ],
   "configurations": [
     {
-      "name": ".NET Core Launch (web)",
+      "name": "web",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build",
-      "program": "${workspaceFolder}/bin/Debug/net7.0/dotnetCore-rabbitMQ-massTransit.dll",
+      "preLaunchTask": "build web",
+      "program": "${workspaceFolder}/Web/bin/Debug/net7.0/web.dll",
       "args": [],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/Web",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-      },
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "sourceFileMap": {
-        "/Views": "${workspaceFolder}/Views"
       }
     },
     {
-      "name": ".NET Core watch",
+      "name": "worker",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "watch",
-      "program": "${workspaceFolder}/bin/Debug/net7.0/dotnetCore-rabbitMQ-massTransit.dll",
+      "preLaunchTask": "build worker",
+      "program": "${workspaceFolder}/Workers/bin/Debug/net7.0/Worker.dll",
       "args": [],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/Workers",
       "stopAtEntry": false,
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-      },
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "sourceFileMap": {
-        "/Views": "${workspaceFolder}/Views"
-      }
+      "console": "integratedTerminal"
     }
   ]
 }

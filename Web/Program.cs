@@ -1,5 +1,5 @@
-using dotnetCore_rabbitMQ_massTransit.Controllers;
 using MassTransit;
+using Messaging.Model;
 using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,17 +13,19 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("amqp://guest:guest@10.90.10.221");
-
+        cfg.Host("amqp://guest:guest@localhost");
         cfg.Message<TestMessage>(
                     x => x.SetEntityName(nameof(TestMessage)));
-
         cfg.Publish<TestMessage>(p =>
         {
             p.ExchangeType = ExchangeType.Direct;
         });
+        cfg.ClearSerialization();
+        cfg.UseRawJsonSerializer();
+        cfg.ConfigureEndpoints(context);
     });
 });
+
 
 var app = builder.Build();
 
