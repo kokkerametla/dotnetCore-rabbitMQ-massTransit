@@ -1,5 +1,5 @@
 # dotnetCore-rabbitMQ-massTransit
-This project is to demonstrate how to configure RabbitMQ using Masstransit and dotnet core 7
+This project is to demonstrate how to configure RabbitMQ using Masstransit and dotnet core 7.0
 
 # Pre-requisites
 1. Install Dotnet SDK 7.0
